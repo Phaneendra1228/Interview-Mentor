@@ -1,0 +1,8 @@
+target/
+*.class
+interview_mentor.db
+.vscode/
+.idea/
+*.jar
+frontend/node_modules/
+backend/target/
