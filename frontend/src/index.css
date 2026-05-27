@@ -29,6 +29,18 @@
   --sidebar-width: 280px;
 }
 
+[data-theme="light"] {
+  --bg-color: #f8fafc;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --sidebar-bg: rgba(255, 255, 255, 0.9);
+  
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  
+  --border-color: rgba(0, 0, 0, 0.1);
+  --border-highlight: rgba(99, 102, 241, 0.3);
+}
+
 body {
   margin: 0;
   padding: 0;
