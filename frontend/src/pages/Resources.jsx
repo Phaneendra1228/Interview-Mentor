@@ -2,16 +2,16 @@ import { BookOpen, ExternalLink, FileText, Video, Target } from 'lucide-react'
 
 const resources = [
   { category: 'System Design', items: [
-    { title: 'System Design Primer', type: 'Github', icon: BookOpen, url: '#' },
-    { title: 'Grokking the System Design Interview', type: 'Course', icon: Video, url: '#' },
+    { title: 'System Design Primer', type: 'Github', icon: BookOpen, url: 'https://github.com/donnemartin/system-design-primer' },
+    { title: 'Grokking the System Design Interview', type: 'Course', icon: Video, url: 'https://www.designgurus.io/course/grokking-the-system-design-interview' },
   ]},
   { category: 'Algorithms', items: [
-    { title: 'Cracking the Coding Interview', type: 'Book', icon: BookOpen, url: '#' },
-    { title: 'LeetCode Top 150', type: 'Practice', icon: Target, url: '#' },
+    { title: 'Cracking the Coding Interview', type: 'Book', icon: BookOpen, url: 'https://www.crackingthecodinginterview.com/' },
+    { title: 'LeetCode Top 150', type: 'Practice', icon: Target, url: 'https://leetcode.com/studyplan/top-interview-150/' },
   ]},
   { category: 'Behavioral', items: [
-    { title: 'The STAR Method Masterclass', type: 'Article', icon: FileText, url: '#' },
-    { title: 'Amazon Leadership Principles', type: 'Guide', icon: FileText, url: '#' },
+    { title: 'The STAR Method Masterclass', type: 'Article', icon: FileText, url: 'https://www.themuse.com/advice/star-interview-method' },
+    { title: 'Amazon Leadership Principles', type: 'Guide', icon: FileText, url: 'https://www.amazon.jobs/content/en/our-workplace/leadership-principles' },
   ]}
 ]
 
@@ -35,16 +35,16 @@ export default function Resources() {
               {section.items.map((item, i) => {
                 const Icon = item.icon || ExternalLink
                 return (
-                  <div key={i} className="glass glass-card" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', transition: 'transform 0.2s', cursor: 'pointer' }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '12px', borderRadius: '8px' }}>
+                  <a href={item.url} target="_blank" rel="noopener noreferrer" key={i} className="glass glass-card" style={{ padding: '20px', display: 'flex', alignItems: 'center', gap: '16px', textDecoration: 'none', color: 'inherit' }}>
+                    <div style={{ background: 'var(--icon-bg)', padding: '12px', borderRadius: '8px' }}>
                       <Icon size={24} color="var(--text-muted)" />
                     </div>
                     <div style={{ flex: 1 }}>
-                      <h4 style={{ fontSize: '1.05rem', marginBottom: '4px' }}>{item.title}</h4>
+                      <h4 style={{ fontSize: '1.05rem', marginBottom: '4px', color: 'var(--text-main)' }}>{item.title}</h4>
                       <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{item.type}</span>
                     </div>
                     <ExternalLink size={18} color="var(--primary-color)" />
-                  </div>
+                  </a>
                 )
               })}
             </div>

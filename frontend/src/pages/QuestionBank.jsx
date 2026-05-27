@@ -5,6 +5,11 @@ import { supabase } from '../supabaseClient'
 export default function QuestionBank() {
   const [questions, setQuestions] = useState([])
   const [loading, setLoading] = useState(false)
+  const [expandedAns, setExpandedAns] = useState({})
+
+  const toggleAnswer = (id) => {
+    setExpandedAns(prev => ({ ...prev, [id]: !prev[id] }))
+  }
 
   const fetchQuestions = async () => {
     setLoading(true)
@@ -48,22 +53,52 @@ export default function QuestionBank() {
         <button className="btn btn-secondary" onClick={fetchQuestions}>Refresh</button>
       </div>
 
-      <div className="glass glass-card">
+      <div>
         {loading ? (
           <div className="loading-spinner" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px' }}>
             <Brain className="lucide-spin" size={32} />
             <span style={{ marginLeft: '12px' }}>Loading questions...</span>
           </div>
         ) : questions.length > 0 ? (
-          questions.map(q => (
-            <div key={q.id} className="question-item" style={{ padding: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-              <span className="question-category" style={{ fontSize: '0.8rem', color: 'var(--primary-color)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
-                {q.category || 'General'}
-              </span>
-              <div className="question-text" style={{ fontSize: '1.1rem', marginTop: '8px', marginBottom: '8px' }}>
+            <div key={q.id} className="question-item glass glass-card" style={{ padding: '24px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <span className="question-category" style={{ fontSize: '0.8rem', color: 'var(--primary-color)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
+                  {q.category || 'General'}
+                </span>
+                <span style={{ fontSize: '0.8rem', color: q.difficulty === 'Hard' ? 'var(--danger-color)' : q.difficulty === 'Medium' ? 'var(--warning-color)' : 'var(--secondary-color)', fontWeight: 600 }}>
+                  {q.difficulty}
+                </span>
+              </div>
+              <div className="question-text" style={{ fontSize: '1.1rem', marginTop: '12px', marginBottom: '16px', fontWeight: 500, color: 'var(--text-main)' }}>
                 {q.text}
               </div>
-              {q.answer && <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', margin: 0 }}>{q.answer.substring(0, 150)}...</p>}
+              
+              {q.answer && (
+                <div style={{ marginTop: '16px' }}>
+                  <button 
+                    onClick={() => toggleAnswer(q.id)}
+                    className="btn btn-secondary"
+                    style={{ padding: '8px 16px', fontSize: '0.9rem' }}
+                  >
+                    {expandedAns[q.id] ? 'Hide Answer' : 'Show Answer'}
+                  </button>
+                  
+                  {expandedAns[q.id] && (
+                    <div style={{ 
+                      marginTop: '16px', 
+                      padding: '16px', 
+                      background: 'rgba(0,0,0,0.1)', 
+                      borderRadius: '8px', 
+                      borderLeft: '4px solid var(--primary-color)',
+                      color: 'var(--text-main)',
+                      lineHeight: '1.6'
+                    }}>
+                      <strong style={{ display: 'block', marginBottom: '8px', color: 'var(--primary-color)' }}>Suggested Answer:</strong>
+                      {q.answer}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))
         ) : (
