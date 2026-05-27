@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { BookOpen, User, CheckCircle, Brain, Target, Play } from 'lucide-react'
+import { supabase } from './supabaseClient'
 import './App.css'
 
 function App() {
@@ -10,13 +11,30 @@ function App() {
   const fetchQuestions = async () => {
     setLoading(true)
     try {
-      const res = await fetch('http://localhost:8080/api/questions')
-      if (res.ok) {
-        const data = await res.json()
-        setQuestions(data)
+      if (!supabase) {
+        console.warn('Supabase not configured in .env file')
+        setQuestions([])
+        return
+      }
+      
+      const { data, error } = await supabase.from('questions').select('*')
+      if (error) {
+        throw error
+      }
+      
+      if (data) {
+        // Map postgres schema to expected frontend format
+        const formattedData = data.map(q => ({
+          id: q.id,
+          category: q.category,
+          text: q.question_text,
+          answer: q.correct_answer,
+          difficulty: q.difficulty
+        }))
+        setQuestions(formattedData)
       }
     } catch (err) {
-      console.error('Failed to fetch questions', err)
+      console.error('Failed to fetch questions from Supabase', err)
     } finally {
       setLoading(false)
     }
@@ -92,7 +110,7 @@ function App() {
           ))
         ) : (
           <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-            No questions found. Please ensure your backend is running on port 8080.
+            No questions found. { !supabase ? "Please configure your Supabase URL and Anon Key in the .env file." : "Your Supabase 'questions' table is empty." }
           </div>
         )}
       </div>
