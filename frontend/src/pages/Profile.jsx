@@ -28,7 +28,7 @@ export default function Profile() {
       </div>
 
       <div className="glass glass-card" style={{ padding: '40px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '40px', paddingBottom: '32px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '40px', paddingBottom: '32px', borderBottom: '1px solid var(--border-color)' }}>
           <div style={{ position: 'relative' }}>
             <div style={{ width: '100px', height: '100px', borderRadius: '50%', background: 'rgba(99, 102, 241, 0.2)', display: 'flex', justifyContent: 'center', alignItems: 'center', border: '2px solid var(--primary-color)' }}>
               <User size={48} color="var(--primary-color)" />
@@ -56,7 +56,7 @@ export default function Profile() {
                   type="text" 
                   value={profile.name}
                   onChange={(e) => setProfile({...profile, name: e.target.value})}
-                  style={{ width: '100%', padding: '12px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'white' }}
+                  style={{ width: '100%', padding: '12px', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }}
                 />
               </div>
               <div>
@@ -65,13 +65,13 @@ export default function Profile() {
                   type="email" 
                   value={profile.email}
                   disabled
-                  style={{ width: '100%', padding: '12px', background: 'rgba(255, 255, 255, 0.02)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '8px', color: 'var(--text-muted)' }}
+                  style={{ width: '100%', padding: '12px', background: 'rgba(0, 0, 0, 0.05)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-muted)' }}
                 />
               </div>
             </div>
           </div>
 
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '24px' }}>
+          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '24px' }}>
             <h4 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary-color)' }}>
               <Bell size={18} /> Preferences
             </h4>
@@ -83,7 +83,7 @@ export default function Profile() {
                 onChange={(e) => setProfile({...profile, notifications: e.target.checked})}
                 style={{ width: '20px', height: '20px' }}
               />
-              <span style={{ color: profile.notifications ? "white" : "var(--text-muted)" }}>Enable Browser Notifications for Study Reminders</span>
+              <span style={{ color: profile.notifications ? "var(--text-main)" : "var(--text-muted)" }}>Enable Browser Notifications for Study Reminders</span>
             </label>
 
             <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
@@ -93,7 +93,7 @@ export default function Profile() {
                 onChange={(e) => setProfile({...profile, weeklyDigest: e.target.checked})}
                 style={{ width: '20px', height: '20px' }}
               />
-              <span style={{ color: profile.weeklyDigest ? "white" : "var(--text-muted)" }}>Receive Weekly Progress Digest via Email</span>
+              <span style={{ color: profile.weeklyDigest ? "var(--text-main)" : "var(--text-muted)" }}>Receive Weekly Progress Digest via Email</span>
             </label>
           </div>
 
