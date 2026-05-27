@@ -5,6 +5,14 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Interview Mentor</title>
+    <script>
+      window.onerror = function(msg, source, lineno, colno, error) {
+        document.body.innerHTML = '<div style="color: white; padding: 20px; font-family: monospace; z-index: 9999; position: relative;"><h1>APP CRASHED</h1><p>' + msg + '</p><pre>' + (error ? error.stack : '') + '</pre></div>';
+      };
+      window.addEventListener('unhandledrejection', function(event) {
+        document.body.innerHTML = '<div style="color: white; padding: 20px; font-family: monospace; z-index: 9999; position: relative;"><h1>PROMISE CRASHED</h1><p>' + (event.reason ? event.reason.stack || event.reason : event) + '</p></div>';
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
