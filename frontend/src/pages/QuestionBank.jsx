@@ -60,6 +60,7 @@ export default function QuestionBank() {
             <span style={{ marginLeft: '12px' }}>Loading questions...</span>
           </div>
         ) : questions.length > 0 ? (
+          questions.map(q => (
             <div key={q.id} className="question-item glass glass-card" style={{ padding: '24px', marginBottom: '16px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <span className="question-category" style={{ fontSize: '0.8rem', color: 'var(--primary-color)', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 600 }}>
