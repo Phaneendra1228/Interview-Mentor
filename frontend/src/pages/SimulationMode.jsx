@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Video, Mic, ShieldAlert, Play } from 'lucide-react'
+import { Video, Mic, ShieldAlert, Play, Clock } from 'lucide-react'
 
 export default function SimulationMode() {
   const navigate = useNavigate()
