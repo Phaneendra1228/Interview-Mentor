@@ -21,6 +21,12 @@ export default function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault()
+    
+    if (!email || !password) {
+      setError("Please enter both email and password.")
+      return
+    }
+    
     setLoading(true)
     setError(null)
     
@@ -45,6 +51,12 @@ export default function Login() {
 
   const handleSignup = async (e) => {
     e.preventDefault()
+    
+    if (!email || !password) {
+      setError("Please enter an email and password to create an account.")
+      return
+    }
+    
     setLoading(true)
     setError(null)
 
