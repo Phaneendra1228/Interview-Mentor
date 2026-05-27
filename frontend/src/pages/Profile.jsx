@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext'
 export default function Profile() {
   const { user } = useAuth()
   const [profile, setProfile] = useState({
-    name: 'Candidate',
+    name: user?.user_metadata?.full_name || 'Candidate',
     email: user?.email || '',
     notifications: true,
     weeklyDigest: true
