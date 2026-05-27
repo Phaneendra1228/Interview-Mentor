@@ -1,5 +1,5 @@
 import { Outlet, Navigate, NavLink } from 'react-router-dom'
-import { Brain, Target, BookOpen, User, Layers, BarChart2, LogOut, Copy, MessageSquare, ShieldAlert } from 'lucide-react'
+import { Brain, Target, BookOpen, User, Layers, BarChart2, LogOut, Copy, MessageSquare, ShieldAlert, History as HistoryIcon, Bookmark, Award, FolderOpen } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 export default function Layout() {
@@ -45,6 +45,18 @@ export default function Layout() {
           </NavLink>
           <NavLink to="/analytics" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <BarChart2 size={20} /> Analytics
+          </NavLink>
+          <NavLink to="/history" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <HistoryIcon size={20} /> History
+          </NavLink>
+          <NavLink to="/bookmarks" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <Bookmark size={20} /> Bookmarks
+          </NavLink>
+          <NavLink to="/achievements" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <Award size={20} /> Achievements
+          </NavLink>
+          <NavLink to="/resources" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <FolderOpen size={20} /> Resources
           </NavLink>
           <NavLink to="/profile" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <User size={20} /> Profile

@@ -10,6 +10,11 @@ import Flashcards from './pages/Flashcards'
 import Behavioral from './pages/Behavioral'
 import SimulationMode from './pages/SimulationMode'
 import Analytics from './pages/Analytics'
+import History from './pages/History'
+import Bookmarks from './pages/Bookmarks'
+import Achievements from './pages/Achievements'
+import Resources from './pages/Resources'
+import Profile from './pages/Profile'
 
 export default function App() {
   return (
@@ -25,7 +30,11 @@ export default function App() {
         <Route path="behavioral" element={<Behavioral />} />
         <Route path="simulation" element={<SimulationMode />} />
         <Route path="analytics" element={<Analytics />} />
-        <Route path="profile" element={<div style={{ padding: '40px' }}><h2>Profile</h2><p>Settings coming soon!</p></div>} />
+        <Route path="history" element={<History />} />
+        <Route path="bookmarks" element={<Bookmarks />} />
+        <Route path="achievements" element={<Achievements />} />
+        <Route path="resources" element={<Resources />} />
+        <Route path="profile" element={<Profile />} />
       </Route>
     </Routes>
   )
