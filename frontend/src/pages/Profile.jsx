@@ -56,7 +56,7 @@ export default function Profile() {
                   type="text" 
                   value={profile.name}
                   onChange={(e) => setProfile({...profile, name: e.target.value})}
-                  style={{ width: '100%', padding: '12px', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)' }}
+                  style={{ width: '100%', padding: '12px', background: 'var(--card-bg)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-main)', boxSizing: 'border-box' }}
                 />
               </div>
               <div>
@@ -65,7 +65,7 @@ export default function Profile() {
                   type="email" 
                   value={profile.email}
                   disabled
-                  style={{ width: '100%', padding: '12px', background: 'rgba(0, 0, 0, 0.05)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-muted)' }}
+                  style={{ width: '100%', padding: '12px', background: 'rgba(0, 0, 0, 0.05)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-muted)', boxSizing: 'border-box' }}
                 />
               </div>
             </div>
