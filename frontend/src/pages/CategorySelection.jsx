@@ -75,7 +75,7 @@ export default function CategorySelection() {
               onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none' }}
             >
               <Icon size={48} color={config.color} style={{ marginBottom: '16px' }} />
-              <div style={{ fontSize: '1.25rem', fontWeight: 600, color: 'white', marginBottom: '8px' }}>{cat}</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-main)', marginBottom: '8px' }}>{cat}</div>
               <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Practice interview questions for {cat}</div>
             </div>
           )
