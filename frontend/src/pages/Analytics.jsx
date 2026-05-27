@@ -1,12 +1,35 @@
 import { useState, useEffect } from 'react'
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
-  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  LineChart, Line
-} from 'recharts'
+import {
+  Chart as ChartJS,
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement
+} from 'chart.js'
+import { Radar, Line, Bar } from 'react-chartjs-2'
 import { BarChart2, TrendingUp, Activity, Award } from 'lucide-react'
 
-// Mock data since we don't have full history tracking in Supabase yet
+ChartJS.register(
+  RadialLinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Tooltip,
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement
+)
+
+ChartJS.defaults.color = 'rgba(255, 255, 255, 0.6)';
+ChartJS.defaults.font.family = 'Inter, system-ui, sans-serif';
+
+// Mock data
 const categoryMastery = [
   { subject: 'System Design', A: 85, fullMark: 100 },
   { subject: 'Algorithms', A: 60, fullMark: 100 },
@@ -44,6 +67,44 @@ export default function Analytics() {
     return <div style={{ padding: '40px', textAlign: 'center' }}>Loading Analytics Engine...</div>
   }
 
+  const radarData = {
+    labels: categoryMastery.map(c => c.subject),
+    datasets: [
+      {
+        label: 'Mastery',
+        data: categoryMastery.map(c => c.A),
+        backgroundColor: 'rgba(99, 102, 241, 0.5)',
+        borderColor: 'rgba(99, 102, 241, 1)',
+        borderWidth: 2,
+      },
+    ],
+  }
+
+  const lineData = {
+    labels: recentScores.map(s => s.name),
+    datasets: [
+      {
+        label: 'Accuracy',
+        data: recentScores.map(s => s.score),
+        borderColor: '#10b981',
+        backgroundColor: '#10b981',
+        tension: 0.4
+      }
+    ]
+  }
+
+  const barData = {
+    labels: difficultyDistribution.map(d => d.name),
+    datasets: [
+      {
+        label: 'Mastered',
+        data: difficultyDistribution.map(d => d.count),
+        backgroundColor: difficultyDistribution.map(d => d.fill),
+        borderRadius: 4
+      }
+    ]
+  }
+
   return (
     <div className="analytics-content" style={{ maxWidth: '1000px', margin: '0 auto' }}>
       <div style={{ marginBottom: '32px' }}>
@@ -77,54 +138,61 @@ export default function Analytics() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px' }}>
         
         {/* Radar Chart: Category Mastery */}
-        <div className="glass glass-card" style={{ padding: '24px' }}>
+        <div className="glass glass-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ marginBottom: '24px', fontSize: '1.1rem' }}>Category Mastery</h3>
-          <div style={{ width: '100%', height: '300px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={categoryMastery}>
-                <PolarGrid stroke="rgba(255,255,255,0.1)" />
-                <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-muted)', fontSize: 12 }} />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
-                <Radar name="Mastery" dataKey="A" stroke="var(--primary-color)" fill="var(--primary-color)" fillOpacity={0.5} />
-                <RechartsTooltip contentStyle={{ backgroundColor: '#1e1e2d', border: 'none', borderRadius: '8px', color: 'white' }} />
-              </RadarChart>
-            </ResponsiveContainer>
+          <div style={{ width: '100%', flex: 1, display: 'flex', justifyContent: 'center', minHeight: '300px' }}>
+            <Radar 
+              data={radarData} 
+              options={{ 
+                maintainAspectRatio: false,
+                scales: { 
+                  r: { 
+                    angleLines: { color: 'rgba(255,255,255,0.1)' },
+                    grid: { color: 'rgba(255,255,255,0.1)' },
+                    pointLabels: { color: 'rgba(255,255,255,0.6)' },
+                    ticks: { display: false, max: 100 }
+                  } 
+                },
+                plugins: { legend: { display: false } }
+              }} 
+            />
           </div>
         </div>
 
         {/* Line Chart: Recent Trend */}
-        <div className="glass glass-card" style={{ padding: '24px' }}>
+        <div className="glass glass-card" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ marginBottom: '24px', fontSize: '1.1rem' }}>Accuracy Trend (Last 7 Days)</h3>
-          <div style={{ width: '100%', height: '300px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={recentScores}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                <XAxis dataKey="name" stroke="var(--text-muted)" tick={{ fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
-                <YAxis domain={[0, 100]} stroke="var(--text-muted)" tick={{ fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
-                <RechartsTooltip contentStyle={{ backgroundColor: '#1e1e2d', border: 'none', borderRadius: '8px', color: 'white' }} />
-                <Line type="monotone" dataKey="score" stroke="#10b981" strokeWidth={3} dot={{ r: 4, fill: '#10b981' }} activeDot={{ r: 8 }} />
-              </LineChart>
-            </ResponsiveContainer>
+          <div style={{ width: '100%', flex: 1, minHeight: '300px' }}>
+            <Line 
+              data={lineData} 
+              options={{ 
+                maintainAspectRatio: false,
+                scales: {
+                  x: { grid: { display: false } },
+                  y: { grid: { color: 'rgba(255,255,255,0.1)' }, max: 100, min: 0 }
+                },
+                plugins: { legend: { display: false } }
+              }} 
+            />
           </div>
         </div>
 
         {/* Bar Chart: Difficulty Breakdown */}
         <div className="glass glass-card" style={{ padding: '24px', gridColumn: '1 / -1' }}>
           <h3 style={{ marginBottom: '24px', fontSize: '1.1rem' }}>Questions Mastered by Difficulty</h3>
-          <div style={{ width: '100%', height: '250px' }}>
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={difficultyDistribution} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
-                <XAxis type="number" stroke="var(--text-muted)" tick={{ fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
-                <YAxis dataKey="name" type="category" stroke="var(--text-muted)" tick={{ fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
-                <RechartsTooltip cursor={{ fill: 'rgba(255,255,255,0.05)' }} contentStyle={{ backgroundColor: '#1e1e2d', border: 'none', borderRadius: '8px', color: 'white' }} />
-                <Bar dataKey="count" radius={[0, 4, 4, 0]}>
-                  {difficultyDistribution.map((entry, index) => (
-                    <cell key={`cell-${index}`} fill={entry.fill} />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          <div style={{ width: '100%', height: '300px' }}>
+            <Bar 
+              data={barData} 
+              options={{ 
+                indexAxis: 'y',
+                maintainAspectRatio: false,
+                scales: {
+                  x: { grid: { color: 'rgba(255,255,255,0.1)' } },
+                  y: { grid: { display: false } }
+                },
+                plugins: { legend: { display: false } }
+              }} 
+            />
           </div>
         </div>
 
