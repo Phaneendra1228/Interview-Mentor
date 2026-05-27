@@ -17,9 +17,15 @@ export const AuthProvider = ({ children }) => {
     }
 
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error('Error getting session:', error)
+      }
+      setSession(session ?? null)
       setUser(session?.user ?? null)
+      setLoading(false)
+    }).catch(err => {
+      console.error('Failed to fetch Supabase session:', err)
       setLoading(false)
     })
 
