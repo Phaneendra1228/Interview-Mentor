@@ -1,4 +1,5 @@
-import { Outlet, Navigate, NavLink } from 'react-router-dom'
+import { Outlet, Navigate, NavLink, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Brain, Target, BookOpen, User, Layers, BarChart2, LogOut, Copy, MessageSquare, ShieldAlert, History as HistoryIcon, Bookmark, Award, FolderOpen, Sun, Moon } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 import { useTheme } from '../contexts/ThemeContext'
@@ -6,6 +7,7 @@ import { useTheme } from '../contexts/ThemeContext'
 export default function Layout() {
   const { session, signOut } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const location = useLocation()
 
   if (!session) {
     return <Navigate to="/login" replace />
@@ -123,8 +125,19 @@ export default function Layout() {
         </div>
       </aside>
 
-      <main className="main-content animate-in">
-        <Outlet />
+      <main className="main-content">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+            style={{ minHeight: '100%' }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   )
