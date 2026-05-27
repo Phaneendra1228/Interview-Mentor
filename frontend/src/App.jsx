@@ -6,6 +6,10 @@ import QuestionBank from './pages/QuestionBank'
 import CategorySelection from './pages/CategorySelection'
 import QuizSession from './pages/QuizSession'
 import QuizResults from './pages/QuizResults'
+import Flashcards from './pages/Flashcards'
+import Behavioral from './pages/Behavioral'
+import SimulationMode from './pages/SimulationMode'
+import Analytics from './pages/Analytics'
 
 export default function App() {
   return (
@@ -17,7 +21,10 @@ export default function App() {
         <Route path="quiz" element={<CategorySelection />} />
         <Route path="quiz/session" element={<QuizSession />} />
         <Route path="quiz/results" element={<QuizResults />} />
-        <Route path="analytics" element={<div style={{ padding: '40px' }}><h2>Analytics</h2><p>Coming in Phase 4!</p></div>} />
+        <Route path="flashcards" element={<Flashcards />} />
+        <Route path="behavioral" element={<Behavioral />} />
+        <Route path="simulation" element={<SimulationMode />} />
+        <Route path="analytics" element={<Analytics />} />
         <Route path="profile" element={<div style={{ padding: '40px' }}><h2>Profile</h2><p>Settings coming soon!</p></div>} />
       </Route>
     </Routes>

@@ -1,5 +1,5 @@
 import { Outlet, Navigate, NavLink } from 'react-router-dom'
-import { Brain, Target, BookOpen, User, Layers, BarChart2, LogOut } from 'lucide-react'
+import { Brain, Target, BookOpen, User, Layers, BarChart2, LogOut, Copy, MessageSquare, ShieldAlert } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 export default function Layout() {
@@ -33,6 +33,15 @@ export default function Layout() {
           </NavLink>
           <NavLink to="/quiz" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <Layers size={20} /> Practice Quiz
+          </NavLink>
+          <NavLink to="/flashcards" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <Copy size={20} /> Flashcards
+          </NavLink>
+          <NavLink to="/behavioral" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <MessageSquare size={20} /> Behavioral Prep
+          </NavLink>
+          <NavLink to="/simulation" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <ShieldAlert size={20} /> Simulation
           </NavLink>
           <NavLink to="/analytics" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
             <BarChart2 size={20} /> Analytics
