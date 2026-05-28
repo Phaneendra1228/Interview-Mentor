@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { Clock, CheckCircle, XCircle, AlertCircle, Video } from 'lucide-react'
@@ -17,6 +17,7 @@ export default function QuizSession() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answers, setAnswers] = useState({})
   const [loading, setLoading] = useState(true)
+  const videoRef = useRef(null)
   
   // Base initial time
   const [timeLeft, setTimeLeft] = useState(isStrict ? 120 : (timeParam ? timeParam * 60 : 600))
@@ -41,6 +42,30 @@ export default function QuizSession() {
     }
     fetchQuizQuestions()
   }, [category])
+
+  // Camera effect
+  useEffect(() => {
+    let stream = null;
+    const startCamera = async () => {
+      if (hasCamera) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream
+          }
+        } catch (err) {
+          console.error("Error accessing camera:", err)
+        }
+      }
+    }
+    startCamera()
+    
+    return () => {
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop())
+      }
+    }
+  }, [hasCamera])
 
   // Timer effect
   useEffect(() => {
@@ -140,12 +165,6 @@ export default function QuizSession() {
         <h2 style={{ color: 'var(--primary-color)' }}>{category} Quiz {isSimulation && <span style={{fontSize: '1rem', color: 'var(--text-muted)', marginLeft: '12px'}}>(Simulation)</span>}</h2>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          {hasCamera && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ef4444', fontSize: '0.9rem', fontWeight: 'bold', background: 'rgba(239, 68, 68, 0.1)', padding: '6px 12px', borderRadius: '20px' }}>
-              <Video size={16} />
-              <span>REC</span>
-            </div>
-          )}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem', color: timeLeft < 60 ? 'var(--danger-color)' : 'var(--text-main)' }}>
             <Clock size={24} />
             <span style={{ fontFamily: 'monospace' }}>{formatTime(timeLeft)}</span>
@@ -205,6 +224,34 @@ export default function QuizSession() {
           </button>
         </div>
       </div>
+
+      {hasCamera && (
+        <div style={{
+          position: 'fixed',
+          bottom: '32px',
+          right: '32px',
+          width: '280px',
+          height: '210px',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          boxShadow: '0 12px 40px rgba(0,0,0,0.4)',
+          border: '2px solid var(--border-color)',
+          background: '#000',
+          zIndex: 1000
+        }}>
+          <video 
+            ref={videoRef} 
+            autoPlay 
+            muted 
+            playsInline
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+          <div style={{ position: 'absolute', top: '12px', right: '12px', display: 'flex', alignItems: 'center', gap: '6px', color: '#ef4444', fontSize: '0.85rem', fontWeight: 'bold', background: 'rgba(0,0,0,0.7)', padding: '6px 12px', borderRadius: '16px' }}>
+            <span style={{ width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 8px #ef4444' }}></span>
+            REC
+          </div>
+        </div>
+      )}
     </div>
   )
 }
