@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import { Clock, CheckCircle, XCircle, AlertCircle, Video } from 'lucide-react'
+import { Clock, CheckCircle, XCircle, AlertCircle, Video, ShieldAlert } from 'lucide-react'
+import * as tf from '@tensorflow/tfjs'
+import * as blazeface from '@tensorflow-models/blazeface'
 
 export default function QuizSession() {
   const [searchParams] = useSearchParams()
@@ -18,6 +20,11 @@ export default function QuizSession() {
   const [answers, setAnswers] = useState({})
   const [loading, setLoading] = useState(true)
   const videoRef = useRef(null)
+  
+  // Proctoring states
+  const [violationWarning, setViolationWarning] = useState(null)
+  const [forceSubmitMessage, setForceSubmitMessage] = useState(null)
+  const violationCountRef = useRef(0)
   
   // Base initial time
   const [timeLeft, setTimeLeft] = useState(isStrict ? 120 : (timeParam ? timeParam * 60 : 600))
@@ -43,27 +50,75 @@ export default function QuizSession() {
     fetchQuizQuestions()
   }, [category])
 
-  // Camera effect
+  const handleCompleteRef = useRef(null);
+
+  const handleViolation = (msg) => {
+    violationCountRef.current += 1;
+    setViolationWarning(`Warning ${violationCountRef.current}/3: ${msg}`);
+    
+    if (violationCountRef.current >= 3) {
+      setForceSubmitMessage(msg);
+    }
+  }
+
+  // Camera & Proctoring effect
   useEffect(() => {
     let stream = null;
-    const startCamera = async () => {
+    let model = null;
+    let proctorInterval = null;
+    let isActive = true;
+
+    const initCameraAndProctoring = async () => {
       if (hasCamera) {
         try {
           stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-          if (videoRef.current) {
+          if (videoRef.current && isActive) {
             videoRef.current.srcObject = stream
+            
+            // Wait for video to start playing
+            await new Promise((resolve) => {
+              videoRef.current.onloadedmetadata = () => {
+                resolve();
+              };
+            });
+            
+            // Initialize Proctoring Model
+            await tf.ready();
+            model = await blazeface.load();
+            
+            proctorInterval = setInterval(async () => {
+              if (!videoRef.current || !model || !isActive) return;
+              
+              try {
+                const predictions = await model.estimateFaces(videoRef.current, false);
+                
+                if (predictions.length === 0) {
+                  handleViolation("No face detected! Please ensure your face is fully visible.");
+                } else if (predictions.length > 1) {
+                  handleViolation("Multiple people detected! Only you should be in the frame.");
+                } else {
+                  // Reset violation count on successful check
+                  if (violationCountRef.current > 0) {
+                    violationCountRef.current = 0;
+                    setViolationWarning(null);
+                  }
+                }
+              } catch (e) {
+                console.error("Proctoring error:", e);
+              }
+            }, 1000);
           }
         } catch (err) {
           console.error("Error accessing camera:", err)
         }
       }
     }
-    startCamera()
+    initCameraAndProctoring()
     
     return () => {
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop())
-      }
+      isActive = false;
+      if (stream) stream.getTracks().forEach(track => track.stop())
+      if (proctorInterval) clearInterval(proctorInterval)
     }
   }, [hasCamera])
 
@@ -134,10 +189,22 @@ export default function QuizSession() {
         timeTaken: 600 - timeLeft,
         category,
         questions,
-        answers
+        answers,
+        violation: forceSubmitMessage
       } 
     })
   }
+
+  useEffect(() => {
+    handleCompleteRef.current = handleComplete;
+  });
+
+  useEffect(() => {
+    if (forceSubmitMessage && handleCompleteRef.current) {
+      alert(`PROCTORING VIOLATION: ${forceSubmitMessage}\nYour quiz has been automatically submitted.`);
+      handleCompleteRef.current();
+    }
+  }, [forceSubmitMessage])
 
   const formatTime = (seconds) => {
     const m = Math.floor(seconds / 60)
@@ -250,6 +317,13 @@ export default function QuizSession() {
             <span style={{ width: '8px', height: '8px', background: '#ef4444', borderRadius: '50%', display: 'inline-block', boxShadow: '0 0 8px #ef4444' }}></span>
             REC
           </div>
+          
+          {violationWarning && (
+            <div style={{ position: 'absolute', bottom: '12px', left: '12px', right: '12px', background: 'rgba(239, 68, 68, 0.9)', color: 'white', padding: '8px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '500', display: 'flex', alignItems: 'center', gap: '8px', animation: 'fade-in-up 0.3s forwards' }}>
+              <ShieldAlert size={16} style={{ flexShrink: 0 }} />
+              <span>{violationWarning}</span>
+            </div>
+          )}
         </div>
       )}
     </div>

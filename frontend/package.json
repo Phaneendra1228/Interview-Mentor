@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.106.2",
+    "@tensorflow-models/blazeface": "^0.1.0",
+    "@tensorflow/tfjs": "^4.22.0",
     "chart.js": "^4.5.1",
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.16.0",
