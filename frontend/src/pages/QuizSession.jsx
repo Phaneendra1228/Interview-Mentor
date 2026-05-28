@@ -1,18 +1,25 @@
 import { useState, useEffect } from 'react'
 import { useSearchParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import { Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { Clock, CheckCircle, XCircle, AlertCircle, Video } from 'lucide-react'
 
 export default function QuizSession() {
   const [searchParams] = useSearchParams()
   const category = searchParams.get('category')
   const navigate = useNavigate()
 
+  const isSimulation = searchParams.get('simulation') === 'true'
+  const hasCamera = searchParams.get('camera') === 'true'
+  const isStrict = searchParams.get('strict') === 'true'
+  const timeParam = parseInt(searchParams.get('time'))
+
   const [questions, setQuestions] = useState([])
   const [currentIndex, setCurrentIndex] = useState(0)
   const [answers, setAnswers] = useState({})
   const [loading, setLoading] = useState(true)
-  const [timeLeft, setTimeLeft] = useState(600) // 10 minutes
+  
+  // Base initial time
+  const [timeLeft, setTimeLeft] = useState(isStrict ? 120 : (timeParam ? timeParam * 60 : 600))
 
   useEffect(() => {
     const fetchQuizQuestions = async () => {
@@ -41,15 +48,35 @@ export default function QuizSession() {
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
-          clearInterval(timer)
-          handleComplete()
-          return 0
+          if (isStrict) {
+            setCurrentIndex(curr => {
+              if (curr < questions.length - 1) {
+                return curr + 1;
+              } else {
+                clearInterval(timer);
+                handleComplete();
+                return curr;
+              }
+            });
+            return 120; // reset for next question
+          } else {
+            clearInterval(timer)
+            handleComplete()
+            return 0
+          }
         }
         return prev - 1
       })
     }, 1000)
     return () => clearInterval(timer)
-  }, [loading, questions.length])
+  }, [loading, questions.length, isStrict])
+
+  // Reset timer on manual question change if strict timing is on
+  useEffect(() => {
+    if (isStrict && !loading && questions.length > 0) {
+      setTimeLeft(120)
+    }
+  }, [currentIndex, isStrict, loading, questions.length])
 
   const handleSelectOption = (option) => {
     setAnswers(prev => ({ ...prev, [currentIndex]: option }))
@@ -110,10 +137,19 @@ export default function QuizSession() {
   return (
     <div className="quiz-session-content" style={{ maxWidth: '800px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2 style={{ color: 'var(--primary-color)' }}>{category} Quiz</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem', color: timeLeft < 60 ? 'var(--danger-color)' : 'var(--text-main)' }}>
-          <Clock size={24} />
-          <span style={{ fontFamily: 'monospace' }}>{formatTime(timeLeft)}</span>
+        <h2 style={{ color: 'var(--primary-color)' }}>{category} Quiz {isSimulation && <span style={{fontSize: '1rem', color: 'var(--text-muted)', marginLeft: '12px'}}>(Simulation)</span>}</h2>
+        
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          {hasCamera && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#ef4444', fontSize: '0.9rem', fontWeight: 'bold', background: 'rgba(239, 68, 68, 0.1)', padding: '6px 12px', borderRadius: '20px' }}>
+              <Video size={16} />
+              <span>REC</span>
+            </div>
+          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem', color: timeLeft < 60 ? 'var(--danger-color)' : 'var(--text-main)' }}>
+            <Clock size={24} />
+            <span style={{ fontFamily: 'monospace' }}>{formatTime(timeLeft)}</span>
+          </div>
         </div>
       </div>
 

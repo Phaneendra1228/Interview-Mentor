@@ -39,7 +39,14 @@ export default function SimulationMode() {
       alert("Please wait for categories to load or add some to the database.")
       return;
     }
-    navigate(`/quiz/session?category=${encodeURIComponent(config.category)}&simulation=true`)
+    const params = new URLSearchParams({
+      category: config.category,
+      simulation: 'true',
+      camera: config.cameraRequired.toString(),
+      strict: config.strictTiming.toString(),
+      time: config.lengthMinutes.toString()
+    })
+    navigate(`/quiz/session?${params.toString()}`)
   }
 
   return (
