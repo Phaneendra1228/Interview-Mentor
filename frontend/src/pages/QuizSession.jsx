@@ -111,7 +111,7 @@ export default function QuizSession() {
     <div className="quiz-session-content" style={{ maxWidth: '800px', margin: '0 auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <h2 style={{ color: 'var(--primary-color)' }}>{category} Quiz</h2>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem', color: timeLeft < 60 ? '#ef4444' : 'white' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '1.2rem', color: timeLeft < 60 ? 'var(--danger-color)' : 'var(--text-main)' }}>
           <Clock size={24} />
           <span style={{ fontFamily: 'monospace' }}>{formatTime(timeLeft)}</span>
         </div>
@@ -136,8 +136,8 @@ export default function QuizSession() {
                 style={{ 
                   padding: '16px', 
                   borderRadius: '8px', 
-                  border: `2px solid ${answers[currentIndex] === opt.id ? 'var(--primary-color)' : 'rgba(255,255,255,0.1)'}`,
-                  background: answers[currentIndex] === opt.id ? 'rgba(99, 102, 241, 0.1)' : 'rgba(255,255,255,0.05)',
+                  border: `2px solid ${answers[currentIndex] === opt.id ? 'var(--primary-color)' : 'var(--border-color)'}`,
+                  background: answers[currentIndex] === opt.id ? 'rgba(99, 102, 241, 0.1)' : 'var(--btn-secondary-bg)',
                   cursor: 'pointer',
                   display: 'flex',
                   gap: '16px'
@@ -158,7 +158,7 @@ export default function QuizSession() {
               placeholder="Draft your answer here (optional)..."
               value={answers[currentIndex] || ''}
               onChange={(e) => handleSelectOption(e.target.value)}
-              style={{ width: '100%', height: '150px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', color: 'white', padding: '16px', marginTop: '16px' }}
+              style={{ width: '100%', height: '150px', marginTop: '16px' }}
             />
           </div>
         )}

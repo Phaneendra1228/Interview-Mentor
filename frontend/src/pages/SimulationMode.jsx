@@ -1,20 +1,45 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Video, Mic, ShieldAlert, Play, Clock } from 'lucide-react'
-
+import { supabase } from '../supabaseClient'
 export default function SimulationMode() {
   const navigate = useNavigate()
+  const [categories, setCategories] = useState([])
   const [config, setConfig] = useState({
     format: 'RELAXED',
     lengthMinutes: 45,
     cameraRequired: false,
-    strictTiming: false
+    strictTiming: false,
+    category: ''
   })
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        if (!supabase) return;
+        const { data, error } = await supabase.from('questions').select('category')
+        if (error) throw error
+        
+        if (data) {
+          const uniqueCats = [...new Set(data.map(q => q.category).filter(Boolean))]
+          setCategories(uniqueCats)
+          if (uniqueCats.length > 0) {
+            setConfig(prev => ({...prev, category: uniqueCats[0]}))
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching categories:', err)
+      }
+    }
+    fetchCategories()
+  }, [])
+
   const handleStart = () => {
-    // In a full implementation, this would navigate to a specialized locked-down QuizSession
-    // that enforces the strict timing and tracks camera/audio if enabled.
-    navigate(`/quiz/session?category=System%20Design&simulation=true`)
+    if (!config.category) {
+      alert("Please wait for categories to load or add some to the database.")
+      return;
+    }
+    navigate(`/quiz/session?category=${encodeURIComponent(config.category)}&simulation=true`)
   }
 
   return (
@@ -28,10 +53,24 @@ export default function SimulationMode() {
       </div>
 
       <div className="glass glass-card" style={{ padding: '32px' }}>
-        <h3 style={{ marginBottom: '24px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '16px' }}>Configure Environment</h3>
+        <h3 style={{ marginBottom: '24px', borderBottom: '1px solid var(--border-color)', paddingBottom: '16px' }}>Configure Environment</h3>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Category</label>
+            <select 
+              value={config.category} 
+              onChange={(e) => setConfig({...config, category: e.target.value})}
+              style={{ width: '100%' }}
+            >
+              {categories.map(cat => (
+                <option key={cat} value={cat}>{cat}</option>
+              ))}
+              {categories.length === 0 && <option value="">Loading categories...</option>}
+            </select>
+          </div>
+
           <div>
             <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Interview Format</label>
             <div style={{ display: 'flex', gap: '16px' }}>
@@ -43,9 +82,9 @@ export default function SimulationMode() {
                     flex: 1, 
                     padding: '12px', 
                     borderRadius: '8px', 
-                    background: config.format === fmt ? 'rgba(99, 102, 241, 0.2)' : 'rgba(255,255,255,0.05)',
-                    border: `1px solid ${config.format === fmt ? 'var(--primary-color)' : 'rgba(255,255,255,0.1)'}`,
-                    color: config.format === fmt ? 'white' : 'var(--text-muted)',
+                    background: config.format === fmt ? 'rgba(99, 102, 241, 0.2)' : 'var(--btn-secondary-bg)',
+                    border: `1px solid ${config.format === fmt ? 'var(--primary-color)' : 'var(--border-color)'}`,
+                    color: config.format === fmt ? 'var(--text-main)' : 'var(--text-muted)',
                     cursor: 'pointer'
                   }}
                 >
@@ -71,7 +110,7 @@ export default function SimulationMode() {
             </div>
           </div>
 
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '24px' }}>
+          <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '24px' }}>
             <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer', marginBottom: '16px' }}>
               <input 
                 type="checkbox" 
@@ -80,7 +119,7 @@ export default function SimulationMode() {
                 style={{ width: '20px', height: '20px' }}
               />
               <Video size={20} color={config.cameraRequired ? "var(--primary-color)" : "var(--text-muted)"} />
-              <span style={{ color: config.cameraRequired ? "white" : "var(--text-muted)" }}>Enable Camera & Audio Recording (Mock)</span>
+              <span style={{ color: config.cameraRequired ? "var(--text-main)" : "var(--text-muted)" }}>Enable Camera & Audio Recording (Mock)</span>
             </label>
 
             <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
@@ -91,7 +130,7 @@ export default function SimulationMode() {
                 style={{ width: '20px', height: '20px' }}
               />
               <Clock size={20} color={config.strictTiming ? "var(--primary-color)" : "var(--text-muted)"} />
-              <span style={{ color: config.strictTiming ? "white" : "var(--text-muted)" }}>Enforce Strict Per-Question Time Limits</span>
+              <span style={{ color: config.strictTiming ? "var(--text-main)" : "var(--text-muted)" }}>Enforce Strict Per-Question Time Limits</span>
             </label>
           </div>
 

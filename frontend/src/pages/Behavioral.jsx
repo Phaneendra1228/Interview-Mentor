@@ -81,7 +81,7 @@ export default function Behavioral() {
               </div>
 
               {expandedId === q.id && (
-                <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border-color)' }}>
                   <form onSubmit={handleSaveStory} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     <div>
                       <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-muted)', fontWeight: 600 }}>
@@ -91,7 +91,7 @@ export default function Behavioral() {
                         required
                         value={activeStory.situation}
                         onChange={(e) => setActiveStory({...activeStory, situation: e.target.value})}
-                        style={{ width: '100%', height: '80px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: 'white' }}
+                        style={{ width: '100%', height: '80px' }}
                       />
                     </div>
                     <div>
@@ -102,7 +102,7 @@ export default function Behavioral() {
                         required
                         value={activeStory.task}
                         onChange={(e) => setActiveStory({...activeStory, task: e.target.value})}
-                        style={{ width: '100%', height: '80px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: 'white' }}
+                        style={{ width: '100%', height: '80px' }}
                       />
                     </div>
                     <div>
@@ -113,7 +113,7 @@ export default function Behavioral() {
                         required
                         value={activeStory.action}
                         onChange={(e) => setActiveStory({...activeStory, action: e.target.value})}
-                        style={{ width: '100%', height: '120px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: 'white' }}
+                        style={{ width: '100%', height: '120px' }}
                       />
                     </div>
                     <div>
@@ -124,7 +124,7 @@ export default function Behavioral() {
                         required
                         value={activeStory.result}
                         onChange={(e) => setActiveStory({...activeStory, result: e.target.value})}
-                        style={{ width: '100%', height: '100px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', color: 'white' }}
+                        style={{ width: '100%', height: '100px' }}
                       />
                     </div>
                     
